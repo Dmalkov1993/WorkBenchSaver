@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Media;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Reflection;
 
 //TODO:
 //1) Сделать зеленое мерцание в панели задач при сохранеии
@@ -18,49 +20,57 @@ namespace WorkBenchSaver
         {
             try
             {
-                Console.WriteLine("Укажите название файла, который будем копировать");
+                // Создадим плеер
+                Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("WorkBenchSaver.Resources.OnSaveEvent.wav");
+                SoundPlayer player = new SoundPlayer(stream);
 
-                var EwbFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ewb");
+                Console.WriteLine("Укажите название файла, который будем копировать" + Environment.NewLine);
 
-                int indexInEwbFiles = 0;
-                foreach (string EwbFile in EwbFiles)
+                var ewbFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ewb");
+
+                int indexOfSelectedEwbFile = 0;
+                string messageForConsole = "Найден 1 файл, выбираем его по умолч:" + Environment.NewLine;
+
+                if (ewbFiles.Length > 1)
                 {
-                    Console.WriteLine("[" + indexInEwbFiles + "] " + Path.GetFileName(EwbFile));
-                    indexInEwbFiles++;
+                    for (int indexInEwbFiles = 0; indexInEwbFiles < ewbFiles.Length; indexInEwbFiles++)
+                    {
+                        Console.WriteLine("[" + indexInEwbFiles + "] " + Path.GetFileName(ewbFiles[indexInEwbFiles]));
+                    }
+
+                    indexOfSelectedEwbFile = Convert.ToInt32(Console.ReadLine());
+                    messageForConsole = "Выбран для бекапа файл: ";
                 }
 
-                int SelectedEwbFile = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine(messageForConsole + Path.GetFileName(ewbFiles[indexOfSelectedEwbFile]));
+                Console.WriteLine(Environment.NewLine + "Для остановки данной процедуры нажмите Ctrl + C, или красный крестик.");
 
-                Console.WriteLine("Выбран для бекапа файл: " + Path.GetFileName(EwbFiles[SelectedEwbFile]));
-                Console.WriteLine("Для остановки данной процедуры нажмите Ctrl + C, или красный крестик.");
+                string selectedEwbFilePath = ewbFiles[indexOfSelectedEwbFile];
 
-                string SelectedEwbFilePath = EwbFiles[SelectedEwbFile];
+                FileInfo fileInfo = new FileInfo(selectedEwbFilePath);
 
-                FileInfo fileInfo = new FileInfo(SelectedEwbFilePath);
-
-                //Запоминаем начальный размер файла
-                long LastSize = fileInfo.Length;
+                // Запоминаем начальный размер файла
+                long lastSize = fileInfo.Length;
                 long currentSize = 0;
 
-                //Начинаем бекап
-                //while (Console.ReadKey().Key != ConsoleKey.Escape)
+                // Начинаем бекап
                 while (true)
                 {
                     fileInfo.Refresh();
                     currentSize = fileInfo.Length;
 
-                    if (currentSize != LastSize && currentSize > 5000)
-                    //if (true)
+                    if (currentSize != lastSize && currentSize > 5000)
                     {
-                        string ooo = GetDestinationFilePath(SelectedEwbFilePath);
+                        File.Copy(selectedEwbFilePath, GetDestinationFilePath(selectedEwbFilePath));
 
-                        File.Copy(SelectedEwbFilePath, ooo);
+                        player.Play();
 
-                        Console.WriteLine("Файл был изменён. LastSize: " + LastSize / 1024 + " Кб,  currentSize: " + currentSize / 1024 + " Кб.");
-                        LastSize = currentSize;
+                        Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + " Файл был изменён. LastSize: " + lastSize / 1024 + " Кб, currentSize: " + currentSize / 1024 + " Кб.");
+                        lastSize = currentSize;
                     }
 
                     Thread.Sleep(1000);
+                    player.Stop();
                 }
             }
             catch (Exception ex)
@@ -68,6 +78,8 @@ namespace WorkBenchSaver
                 Console.WriteLine("Ошибка: " + ex.Message);
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
+
+                Console.ReadKey();
             }
         }
 
