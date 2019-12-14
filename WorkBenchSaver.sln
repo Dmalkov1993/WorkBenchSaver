@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkBenchSaver", "WorkBenchSaver\WorkBenchSaver.csproj", "{90EA8A0A-2839-4509-A5D6-2AA9E3E51FFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90EA8A0A-2839-4509-A5D6-2AA9E3E51FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90EA8A0A-2839-4509-A5D6-2AA9E3E51FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90EA8A0A-2839-4509-A5D6-2AA9E3E51FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90EA8A0A-2839-4509-A5D6-2AA9E3E51FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {143B6770-8232-4591-A843-5BBA5560A972}
+	EndGlobalSection
+EndGlobal
